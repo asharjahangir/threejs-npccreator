@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js and Blockly Integration</title>
+    <link rel="shortcut icon" href="#">
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden; /* Prevent scrolling */
+        }
+        #threejs-container {
+            width: 50%;
+            height: 100%;
+            background-color: #eeeeee;
+            overflow: hidden; /* Hide overflow */
+        }
+        #blockly-container {
+            width: 50%;
+            height: 100%;
+            background-color: white;
+            display: flex;
+            flex-direction: column; /* Align children vertically */
+        }
+        #blockly-div {
+            flex: 1; /* Allow it to take available space */
+            overflow-x: auto; /* Enable horizontal scrolling */
+            overflow-y: hidden; /* Hide vertical overflow */
+            white-space: nowrap; /* Prevent line breaks */
+        }
+        /* Button styles */
+        #play-button, #stop-button, #reset-button {
+            position: absolute;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(to bottom right, orange, red); /* Gradient background */
+            color: white; /* White text */
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s;
+        }
+        #play-button {
+            top: 30px; /* Added space above the play button */
+        }
+        #play-button:hover {
+            background: linear-gradient(to bottom right, #d30101, orange); /* Darker red on hover */
+        }
+        #stop-button {
+            top: 90px; /* Position below play button */
+        }
+        #stop-button:hover {
+            background: linear-gradient(to bottom right, #d30101, orange); /* Darker red on hover */
+        }
+        #reset-button {
+            top: 150px; /* Position below stop button */
+            font-size: 32px; /* Larger font size for icon */
+        }
+        #reset-button:hover {
+            background: linear-gradient(to bottom right, #d30101, orange); /* Darker red on hover */
+        }
+
+        #reset-button img {
+            width: 24px; /* Smaller size */
+            height: 24px; /* Smaller size */
+            filter: brightness(0) invert(1); /* Change black to white */
+        }
+        /* Vector square icon */
+        .square-icon {
+            width: 12px; /* Smaller square */
+            height: 12px; /* Smaller square */
+            background-color: white; /* White square */
+            border: 2px solid #fff; /* White border */
+        }
+    </style>
+</head>
+<body>
+
+<div id="threejs-container"></div>
+<!-- Blockly container -->
+<div id="blockly-container">
+    <div id="blockly-div"></div>
+</div>
+
+<!-- Play button -->
+<button id="play-button">▶</button>
+<!-- Stop button -->
+<button id="stop-button">
+    <div class="square-icon"></div>
+</button>
+<!-- Reset button -->
+<button id="reset-button">
+    <img src="images/reset-icon.png" alt="Reset" />
+</button>
+
+<script src="https://unpkg.com/blockly/blockly.min.js"></script>
+<script type="module" src="npcScene.js"></script>
+<script type="module" src="blocklyEditor.js"></script>
+<script type="module" src="player.js"></script>
+<script src="https://unpkg.com/blockly"></script>
+<script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+<script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+
+</body>
+</html>
