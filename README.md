@@ -21,6 +21,6 @@ npm install vite
 You should get a local host link to host the program.
 ## Sample images for reference
 First Look:
-<img width="1470" alt="Screenshot 2024-08-27 at 3 32 18 PM" src="https://github.com/user-attachments/assets/e1f3f969-53c6-46d0-a6bf-904c3a9e0b96
+[Image](https://github.com/user-attachments/assets/e1f3f969-53c6-46d0-a6bf-904c3a9e0b96)
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
