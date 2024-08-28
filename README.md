@@ -42,4 +42,4 @@ Working sample(Character with the Yellow cursor is a "Player")
 * [ThreeJS](https://github.com/mrdoob/three.js) - A Javascript 3D library
 * [Blockly](https://github.com/google/blockly) - A Block-based Visual Programming library
 ## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/asharjahangir/threejs-npccreator/blob/main/LICENSE) file for details.
