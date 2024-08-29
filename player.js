@@ -6,6 +6,7 @@ const clock = new THREE.Clock();
 export const player = createNPCGroup(scene);
 
 player.position.x += 5;
+export let action = "idle";
 
 // Create the diamond shape (upside down)
 const diamondGeometry = new THREE.ConeGeometry(0.5, 1, 4);
@@ -51,6 +52,12 @@ function handleMovement() {
         direction.x = 1;
     }
 
+    if (keys['1']) {
+        player.swap(2);
+        action = "waving";
+        console.log(action);
+    }
+
     // Normalize and apply movement
     if (direction.length() > 0) {
         direction.normalize(); // Ensure consistent speed
@@ -70,7 +77,13 @@ window.addEventListener('keydown', (event) => {
 });
 window.addEventListener('keyup', (event) => {
     player.swap(0);
+    action = "idle";
+    console.log(action);
     keys[event.key] = false;
 });
 
 animate(); // Start the animation loop
+
+player.getCurrentAction = function () {
+    return action;
+};
