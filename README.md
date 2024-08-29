@@ -5,7 +5,7 @@ The following instructions should be able to get the program hosted on your mach
 ### Prerequisites
 NodeJS was used to deploy this project originally however you may get it to work with other frameworks.
 ### Installing
-Download or clone this repository and the Blockly repository and run the following commands on the terminal.
+Download zip or clone this repository and run the following commands on the terminal.
 #### 1. NPM
 ```
 npm install
@@ -13,6 +13,10 @@ npm install
 #### 3. Install ThreeJS
 ```
 npm install --save three
+```
+#### 3. Install Blockly
+```
+npm install --save blockly
 ```
 #### 3. Install vite
 ```
