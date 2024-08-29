@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'; // Import OrbitControls
-import { createNPCGroup } from './npc';
 
 // Create scene, camera, and renderer
 export const scene = new THREE.Scene();
