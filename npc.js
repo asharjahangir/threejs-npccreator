@@ -12,11 +12,11 @@ let lookAroundTime = 0; // Timer for looking around
 const maxLookAroundDuration = 3; // Max duration to look around (in seconds)
 
 export function createNPCGroup(scene) {
-    const npcGroup = new THREE.Group();
-    npcGroup.position.y = 1.150; 
-    scene.add(npcGroup);
+    const npc = new THREE.Group();
+    npc.position.y = 1.150; 
+    scene.add(npc);
 
-    const defaultPosition = npcGroup.position;
+    const defaultPosition = npc.position;
 
     const loader = new GLTFLoader();
     const models = ['avatar_Idle.glb', 'avatar_Walk.glb', 'avatar_Waving.glb'];
@@ -29,7 +29,7 @@ export function createNPCGroup(scene) {
         loader.load(`assets/${model}`, function (gltf) {
             const avatar = gltf.scene;
             avatars[index] = avatar; 
-            npcGroup.add(avatar); 
+            npc.add(avatar); 
 
             const clip = gltf.animations[0];
             if (clip) {
@@ -48,17 +48,17 @@ export function createNPCGroup(scene) {
         });
     });
 
-    npcGroup.update = function (delta) {
+    npc.update = function (delta) {
         animations.forEach(mixer => mixer.update(delta));
     };
 
-    npcGroup.reset = function () {
-        npcGroup.position.copy(new THREE.Vector3(0, npcGroup.position.y, 0));
-        npcGroup.rotation.set(0, 0, 0); // Reset rotation
-        npcGroup.swap(0);
+    npc.reset = function () {
+        npc.position.copy(new THREE.Vector3(0, npc.position.y, 0));
+        npc.rotation.set(0, 0, 0); // Reset rotation
+        npc.swap(0);
     }
 
-    npcGroup.swap = function (index) {
+    npc.swap = function (index) {
         avatars.forEach((avatar, i) => {
             if (avatar) {
                 avatar.visible = (i === index); 
@@ -67,27 +67,27 @@ export function createNPCGroup(scene) {
     };
 
     function hideAllModels() {
-        npcGroup.traverse(child => {
+        npc.traverse(child => {
             if (child.isMesh) {
                 child.visible = false; 
             }
         });
     }
     
-    npcGroup.blockAction = async function (action, duration) {
+    npc.blockAction = async function (action, duration) {
         console.log(`Performing ${action.toUpperCase()} action`);
     
         // Immediately swap to the specified action
         switch (action) {
             case 'wave':
-                npcGroup.swap(2);
+                npc.swap(2);
                 break;
             case 'wander':
-                npcGroup.swap(1);
+                npc.swap(1);
                 npcWander(duration);
                 break;
             case 'idle':
-                npcGroup.swap(0);
+                npc.swap(0);
                 return; // Exit if idle
             default:
                 console.log(`Unknown action: ${action.toUpperCase()}`);
@@ -105,7 +105,7 @@ export function createNPCGroup(scene) {
     
             if (elapsedTime >= duration * 1000) {
                 isActive = false; // Stop the update loop
-                npcGroup.swap(0); // Revert to idle
+                npc.swap(0); // Revert to idle
                 console.log(`${action.toUpperCase()} action was performed for ${Math.round(elapsedTime / 1000 * 10) / 10} second(s)`);
             }
         };
@@ -134,11 +134,11 @@ export function createNPCGroup(scene) {
         });
     };
 
-    npcGroup.blockIf = async function (character, action, statement_if) {
+    npc.blockIf = async function (character, action, statement_if) {
         if (character === "player") {
             switch (action) {
                 case "nearby":
-                    if (await npcGroup.position.distanceTo(player.position) <= 5) {
+                    if (await npc.position.distanceTo(player.position) <= 5) {
                         // Execute the statement_if block if the condition is true
                         if (statement_if) {
                             await statement_if(); // Execute the statement as a function
@@ -168,11 +168,11 @@ export function createNPCGroup(scene) {
         }
     }
 
-    npcGroup.blockIfElse = async function (character, action, statement_if, statement_else) {
+    npc.blockIfElse = async function (character, action, statement_if, statement_else) {
         if (character === "player") {
             switch (action) {
                 case "nearby":
-                    if (await npcGroup.position.distanceTo(player.position) <= 5) {
+                    if (await npc.position.distanceTo(player.position) <= 5) {
                         // Execute the statement_if block if the condition is true
                         if (statement_if) {
                             await statement_if(); // Execute the statement as a function
@@ -207,19 +207,19 @@ export function createNPCGroup(scene) {
         }
     }
 
-    npcGroup.animate = function () {
-        requestAnimationFrame(npcGroup.animate);
+    npc.animate = function () {
+        requestAnimationFrame(npc.animate);
 
         const delta = clock.getDelta(); // Get time delta for animation
-        npcGroup.update(delta); // Update NPC animations based on Blockly actions
+        npc.update(delta); // Update NPC animations based on Blockly actions
     }
 
-    npcGroup.blockRun = async function () {
-        // await npcGroup.blockAction('wander', 5);
-        // await npcGroup.blockAction('wave', 5);
+    npc.blockRun = async function () {
+        // await npc.blockAction('wander', 5);
+        // await npc.blockAction('wave', 5);
     };
     
-    npcGroup.blockRun();
+    npc.blockRun();
 
     function npcWander(duration) {
         const startTime = performance.now();
@@ -241,11 +241,11 @@ export function createNPCGroup(scene) {
             if (elapsedTime < duration) {
                 if (isWandering) {
                     // Move NPCs in the target direction
-                    npcGroup.position.add(targetDirection.clone().multiplyScalar(speed));
+                    npc.position.add(targetDirection.clone().multiplyScalar(speed));
     
                     // Smoothly rotate towards the target direction
                     const targetRotation = Math.atan2(targetDirection.x, targetDirection.z);
-                    npcGroup.rotation.y = THREE.MathUtils.lerp(npcGroup.rotation.y, targetRotation, 0.05); // Smooth rotation
+                    npc.rotation.y = THREE.MathUtils.lerp(npc.rotation.y, targetRotation, 0.05); // Smooth rotation
     
                     // Randomly change direction
                     if (Math.random() < 0.01) {
@@ -264,5 +264,5 @@ export function createNPCGroup(scene) {
     }
     
 
-    return npcGroup;
+    return npc;
 }
