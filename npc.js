@@ -2,7 +2,8 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { scene } from './npcScene';
-import { player } from './player';
+import { action, player } from './player';
+action
 
 let isMoving = false;
 let speed = 0.025;
@@ -52,18 +53,26 @@ export function createNPCGroup(scene) {
         animations.forEach(mixer => mixer.update(delta));
     };
 
-    npc.reset = function () {
-        npc.position.copy(new THREE.Vector3(0, npc.position.y, 0));
-        npc.rotation.set(0, 0, 0); // Reset rotation
-        npc.swap(0);
-    }
-
     npc.swap = function (index) {
         avatars.forEach((avatar, i) => {
             if (avatar) {
                 avatar.visible = (i === index); 
             }
         });
+    };
+
+    // Function to get the index of the currently visible model
+    npc.getCurrentAction = function () {
+        for (let i = 0; i < avatars.length; i++) {
+            if (avatars[i] && avatars[i].visible) {
+                switch (i) {
+                    case 0: return "idle"; break;
+                    case 1: return "wandering"; break;
+                    case 2: return "waving"; break;
+                }
+            }
+        }
+        return -1; // Return -1 if no model is visible
     };
 
     function hideAllModels() {
@@ -73,6 +82,14 @@ export function createNPCGroup(scene) {
             }
         });
     }
+
+    npc.reset = function () {
+        npc.position.copy(new THREE.Vector3(0, npc.position.y, 0));
+        npc.rotation.set(0, 0, 0); // Reset rotation
+        npc.swap(0);
+    }
+
+    // Blocks
     
     npc.blockAction = async function (action, duration) {
         console.log(`Performing ${action.toUpperCase()} action`);
@@ -80,15 +97,21 @@ export function createNPCGroup(scene) {
         // Immediately swap to the specified action
         switch (action) {
             case 'wave':
-                npc.swap(2);
+                setTimeout(() => {
+                    npc.swap(2);
+                }, 1);
                 break;
             case 'wander':
-                npc.swap(1);
+                setTimeout(() => {
+                    npc.swap(1);
+                }, 1);
                 npcWander(duration);
                 break;
             case 'idle':
-                npc.swap(0);
-                return; // Exit if idle
+                setTimeout(() => {
+                    npc.swap(0);
+                }, 1);
+                break; // Exit if idle
             default:
                 console.log(`Unknown action: ${action.toUpperCase()}`);
                 return; // Exit if action is unknown
@@ -105,8 +128,11 @@ export function createNPCGroup(scene) {
     
             if (elapsedTime >= duration * 1000) {
                 isActive = false; // Stop the update loop
-                npc.swap(0); // Revert to idle
+                setTimeout(() => {
+                    npc.swap(0);
+                }, 1);
                 console.log(`${action.toUpperCase()} action was performed for ${Math.round(elapsedTime / 1000 * 10) / 10} second(s)`);
+                return;
             }
         };
     
@@ -134,11 +160,69 @@ export function createNPCGroup(scene) {
         });
     };
 
+    npc.blockMoveTarget = async function (direction, target) {
+        setTimeout(() => {
+            npc.swap(1);
+        }, 1);
+        if (direction == "towards") {
+            if (target == "player") {
+                while (true) {
+                    // Calculate direction to the player
+                    const directionVector = new THREE.Vector3().subVectors(player.position, npc.position).normalize();
+                
+                    // Create a quaternion representing the desired rotation
+                    const targetQuaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), directionVector);
+                    
+                    // Smoothly interpolate the current quaternion towards the target quaternion
+                    npc.quaternion.slerp(targetQuaternion, 0.1); // Adjust the factor for smoother rotation
+
+                    if (npc.position.distanceTo(player.position) < 4) {
+                        npc.swap(0);
+                        break;
+                    }
+                
+                    // Move the NPC towards the player
+                    npc.position.lerp(player.position, 0.015);
+                
+                    // Yield control to allow smooth animation
+                    await new Promise(requestAnimationFrame);
+                }
+            }
+        }
+        if (direction == "away") {
+            if (target == "player") {
+                while (true) {
+                    // Calculate direction away from the player
+                    const directionVector = new THREE.Vector3().subVectors(npc.position, player.position).normalize();
+                    
+                    // Create a quaternion to face away from the player
+                    const targetQuaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), directionVector);
+                    
+                    // Smoothly interpolate the current quaternion towards the target quaternion
+                    npc.quaternion.slerp(targetQuaternion, 0.1); // Adjust the factor for smoother rotation
+                
+                    // Smooth movement away from the player
+                    npc.position.lerp(npc.position.clone().add(directionVector), 0.05);
+                
+                    // Stop if far enough
+                    if (npc.position.distanceTo(player.position) > 10) {
+                        npc.swap(0);
+                        break;
+                    }
+                
+                    // Yield control to allow smooth animation
+                    await new Promise(requestAnimationFrame);
+                }
+            }
+        }
+    };
+
     npc.blockIf = async function (character, action, statement_if) {
         if (character === "player") {
             switch (action) {
                 case "nearby":
                     if (await npc.position.distanceTo(player.position) <= 5) {
+                        console.log("Checking if player is NEARBY");
                         // Execute the statement_if block if the condition is true
                         if (statement_if) {
                             await statement_if(); // Execute the statement as a function
@@ -146,10 +230,20 @@ export function createNPCGroup(scene) {
                     }
                     break;
                 case "idle":
-                    // Handle idle case
+                    if (await player.getCurrentAction() == "idle") {
+                        console.log("Checking if player is IDLE");
+                        if (statement_if) {
+                            await statement_if(); // Execute the statement as a function
+                        }
+                    }
                     break;
                 case "waving":
-                    // Handle waving case
+                    if (await player.getCurrentAction() == "waving") {
+                        console.log("Checking if player is WAVING");
+                        if (statement_if) {
+                            await statement_if(); // Execute the statement as a function
+                        }
+                    }
                     break;
             }
         }
@@ -185,10 +279,30 @@ export function createNPCGroup(scene) {
                     }
                     break;
                 case "idle":
-                    // Handle idle case
+                    if (await player.getCurrentAction() == "idle") {
+                        console.log("sandkansdk")
+                        if (statement_if) {
+                            await statement_if(); // Execute the statement as a function
+                        }
+                    }
+                    else {
+                        if (statement_else) {
+                            await statement_else();
+                        }
+                    }
                     break;
                 case "waving":
-                    // Handle waving case
+                    if (await player.getCurrentAction() == "waving") {
+                        console.log("sandkansdk")
+                        if (statement_if) {
+                            await statement_if(); // Execute the statement as a function
+                        }
+                    }
+                    else {
+                        if (statement_else) {
+                            await statement_else();
+                        }
+                    }
                     break;
             }
         }
@@ -209,14 +323,13 @@ export function createNPCGroup(scene) {
 
     npc.animate = function () {
         requestAnimationFrame(npc.animate);
-
         const delta = clock.getDelta(); // Get time delta for animation
         npc.update(delta); // Update NPC animations based on Blockly actions
     }
 
     npc.blockRun = async function () {
-        // await npc.blockAction('wander', 5);
-        // await npc.blockAction('wave', 5);
+        // await npcGroup.blockAction('wander', 5);
+        // await npcGroup.blockAction('wave', 5);
     };
     
     npc.blockRun();
