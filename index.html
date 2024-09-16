@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,35 +11,55 @@
             display: flex;
             margin: 0;
             height: 100vh;
-            overflow: hidden; /* Prevent scrolling */
+            overflow: hidden;
+            font-family: Arial;
+            font-size: 1rem;
         }
+
         #threejs-container {
             width: 50%;
             height: 100%;
             background-color: #eeeeee;
-            overflow: hidden; /* Hide overflow */
+            overflow: hidden;
         }
+
         #blockly-container {
             width: 50%;
             height: 100%;
             background-color: white;
             display: flex;
-            flex-direction: column; /* Align children vertically */
+            flex-direction: column;
         }
+
         #blockly-div {
-            flex: 1; /* Allow it to take available space */
-            overflow-x: auto; /* Enable horizontal scrolling */
-            overflow-y: hidden; /* Hide vertical overflow */
-            white-space: nowrap; /* Prevent line breaks */
+            flex: 1;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
         }
-        /* Button styles */
-        #play-button, #stop-button, #reset-button {
+
+        #behaviour-dropdown {
+            position: absolute;
+            right: 100px;
+            top: 32px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #play-button,
+        #stop-button,
+        #reset-button,
+        #save-button {
             position: absolute;
             right: 20px;
             width: 50px;
             height: 50px;
-            background: linear-gradient(to bottom right, orange, red); /* Gradient background */
-            color: white; /* White text */
+            background: linear-gradient(to left, orange, #f40d30);
+            color: white;
             border: none;
             border-radius: 50%;
             cursor: pointer;
@@ -49,66 +70,241 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: background 0.3s;
         }
+
         #play-button {
-            top: 30px; /* Added space above the play button */
-        }
-        #play-button:hover {
-            background: linear-gradient(to bottom right, #d30101, orange); /* Darker red on hover */
-        }
-        #stop-button {
-            top: 90px; /* Position below play button */
-        }
-        #stop-button:hover {
-            background: linear-gradient(to bottom right, #d30101, orange); /* Darker red on hover */
-        }
-        #reset-button {
-            top: 150px; /* Position below stop button */
-            font-size: 32px; /* Larger font size for icon */
-        }
-        #reset-button:hover {
-            background: linear-gradient(to bottom right, #d30101, orange); /* Darker red on hover */
+            top: 30px;
         }
 
-        #reset-button img {
-            width: 24px; /* Smaller size */
-            height: 24px; /* Smaller size */
-            filter: brightness(0) invert(1); /* Change black to white */
+        #stop-button {
+            top: 90px;
         }
-        /* Vector square icon */
+
+        #reset-button {
+            top: 150px;
+            font-size: 32px;
+        }
+
+        #save-button {
+            top: 210px;
+        }
+
+        #play-button:hover,
+        #stop-button:hover,
+        #reset-button:hover,
+        #save-button:hover {
+            background: linear-gradient(to left, #d30101, orange);
+        }
+
+        #reset-button img,
+        #save-button img {
+            width: 24px;
+            height: 24px;
+            filter: brightness(0) invert(1);
+        }
+
         .square-icon {
-            width: 12px; /* Smaller square */
-            height: 12px; /* Smaller square */
-            background-color: white; /* White square */
-            border: 2px solid #fff; /* White border */
+            width: 12px;
+            height: 12px;
+            background-color: white;
+            border: 2px solid #fff;
+        }
+
+        /* Tooltip Styles */
+        .tooltip {
+            position: absolute;
+            background-color: white;
+            color: black;
+            padding: 3px 5px;
+            border-radius: 3px;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+            font-size: 15px;
+            z-index: 10;
+        }
+
+        button {
+            position: relative;
+        }
+
+        #play-button .tooltip {
+            right: 60px;
+            top: 0;
+        }
+
+        #stop-button .tooltip {
+            right: 60px;
+            top: 0;
+        }
+
+        #reset-button .tooltip {
+            right: 60px;
+            top: 0;
+        }
+
+        #save-button .tooltip {
+            right: 60px;
+            top: 0;
+        }
+
+        button:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff;
+            margin: 10% auto;
+            padding: 5rem;
+            /* Increased padding */
+            width: 600px;
+            /* Increased width */
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+            /* Positioning for the close button */
+        }
+
+        .modal-content p {
+            margin-bottom: 2rem;
+            /* Add space below the text */
+            font-weight: 800;
+            font-size: 1.575rem;
+            line-height: 2.25rem
+        }
+
+        .close-button {
+            position: absolute;
+            top: 0.5rem;
+            left: 1rem;
+            cursor: pointer;
+            font-size: 3rem;
+            /* Increased font size */
+            padding: 10px;
+            /* Added padding */
+        }
+
+        #behaviour-name {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+        }
+
+        #modal-save-button,
+        #modal-cancel-button {
+            width: 48%;
+            /* Adjusted width for side-by-side layout */
+            padding: 15px;
+            /* Increased padding */
+            border: none;
+            border-radius: 5rem;
+            margin-top: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            display: inline-block;
+            /* Ensure they are inline */
+        }
+
+        #modal-save-button {
+            background-color: rgb(4 137 255 / 1);
+            color: white;
+        }
+
+        #modal-cancel-button {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        #modal-save-button:hover {
+            background-color: #0056b3;
+        }
+
+        #modal-cancel-button:hover {
+            background-color: #c82333;
+        }
+
+        /* Flexbox for buttons */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            /* Space between buttons */
+            width: 100%;
+            /* Full width for container */
         }
     </style>
 </head>
+
 <body>
+    <div id="save-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <p>Save behaviour as:</p>
+            <input type="text" id="behaviour-name" placeholder="Enter a name for your behaviour" />
+            <div class="button-container">
+                <button id="modal-save-button">Save</button>
+                <button id="modal-cancel-button">Cancel</button>
+            </div>
+        </div>
+    </div>
 
-<div id="threejs-container"></div>
-<!-- Blockly container -->
-<div id="blockly-container">
-    <div id="blockly-div"></div>
-</div>
+    <div id="threejs-container"></div>
+    <div id="blockly-container">
+        <div id="blockly-div"></div>
+    </div>
 
-<!-- Play button -->
-<button id="play-button">▶</button>
-<!-- Stop button -->
-<button id="stop-button">
-    <div class="square-icon"></div>
-</button>
-<!-- Reset button -->
-<button id="reset-button">
-    <img src="images/reset-icon.png" alt="Reset" />
-</button>
+    <select id="behaviour-dropdown">
+        <option value="" disabled selected>Choose behaviour template</option>
+    </select>
 
-<script src="https://unpkg.com/blockly/blockly.min.js"></script>
-<script type="module" src="npcScene.js"></script>
-<script type="module" src="blocklyEditor.js"></script>
-<script type="module" src="player.js"></script>
-<script src="https://unpkg.com/blockly"></script>
-<script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
-<script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+    <!-- Play button -->
+    <button id="play-button">
+        ▶
+        <span class="tooltip">Play NPC State</span>
+    </button>
+    <!-- Stop button -->
+    <button id="stop-button">
+        <div class="square-icon"></div>
+        <span class="tooltip">Stop NPC State</span>
+    </button>
+    <!-- Reset button -->
+    <button id="reset-button">
+        <img src="images/reset-icon.png" alt="Reset" />
+        <span class="tooltip">Reset NPC State</span>
+    </button>
+    <!-- Save button -->
+    <button id="save-button">
+        <img src="images/save-icon.png" alt="Save" />
+        <span class="tooltip">Save NPC State as a behaviour template</span>
+    </button>
 
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    <script type="module" src="npcScene.js"></script>
+    <script type="module" src="blocklyEditor.js"></script>
+    <script type="module" src="player.js"></script>
+    <script src="https://unpkg.com/blockly"></script>
+    <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
 </body>
+
 </html>
