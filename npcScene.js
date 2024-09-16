@@ -1,13 +1,18 @@
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'; // Import OrbitControls
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"; // Import OrbitControls
 
 // Create scene, camera, and renderer
 export const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setClearColor(0xeeeeee, 1);
-document.getElementById('threejs-container').appendChild(renderer.domElement);
+document.getElementById("threejs-container").appendChild(renderer.domElement);
 //const npc = createNPCGroup(scene);
 // Add ambient light
 const ambientLight = new THREE.AmbientLight(0xffffff, 2);
@@ -17,7 +22,7 @@ scene.add(ambientLight);
 const skyboxGeometry = new THREE.SphereGeometry(500, 32, 32);
 const skyboxMaterial = new THREE.MeshBasicMaterial({
     side: THREE.BackSide,
-    vertexColors: true
+    vertexColors: true,
 });
 
 // Create vertices for the gradient
@@ -40,13 +45,16 @@ for (let i = 0; i < skyboxVertices.length / 3; i++) {
     }
 }
 
-skyboxGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+skyboxGeometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 const skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
 scene.add(skybox);
 
 // Create a floor for the avatar
 const floorGeometry = new THREE.PlaneGeometry(100, 100);
-const floorMaterial = new THREE.MeshBasicMaterial({ color: 0x888888, side: THREE.DoubleSide });
+const floorMaterial = new THREE.MeshBasicMaterial({
+    color: 0x888888,
+    side: THREE.DoubleSide,
+});
 const floor = new THREE.Mesh(floorGeometry, floorMaterial);
 floor.rotation.x = -Math.PI / 2; // Rotate the floor to be horizontal
 floor.position.y = -0.01; // Slightly below the avatar
@@ -67,7 +75,7 @@ controls.maxPolarAngle = Math.PI / 2; // Prevent flipping
 
 // Handle window resize
 function resize() {
-    const threejsContainer = document.getElementById('threejs-container');
+    const threejsContainer = document.getElementById("threejs-container");
     const width = threejsContainer.clientWidth;
     const height = threejsContainer.clientHeight;
     renderer.setSize(width, height);
@@ -82,7 +90,7 @@ resize();
 window.onWindowResize = resize;
 
 // Add resize event listener
-window.addEventListener('resize', resize);
+window.addEventListener("resize", resize);
 
 // Animation loop
 export function animate() {
