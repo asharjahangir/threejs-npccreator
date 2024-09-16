@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 import { scene } from "./npcScene";
 import { createNPCGroup } from "./npc";
 
@@ -10,11 +10,15 @@ export let action = "idle";
 
 // Create the diamond shape (upside down)
 const diamondGeometry = new THREE.ConeGeometry(0.5, 1, 4);
-const diamondMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00, transparent: true, opacity: 0.7 });
+const diamondMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffff00,
+    transparent: true,
+    opacity: 0.7,
+});
 const diamond = new THREE.Mesh(diamondGeometry, diamondMaterial);
 
 // Position the diamond above the player
-diamond.position.y = 2; 
+diamond.position.y = 2;
 diamond.rotation.x = Math.PI; // Turn it upside down
 player.add(diamond);
 
@@ -39,20 +43,24 @@ function animate() {
 function handleMovement() {
     const direction = new THREE.Vector3();
 
-    if (keys['w']) { // Forward
+    if (keys["w"]) {
+        // Forward
         direction.z = -1;
     }
-    if (keys['s']) { // Backward
+    if (keys["s"]) {
+        // Backward
         direction.z = 1;
     }
-    if (keys['a']) { // Left
+    if (keys["a"]) {
+        // Left
         direction.x = -1;
     }
-    if (keys['d']) { // Right
+    if (keys["d"]) {
+        // Right
         direction.x = 1;
     }
 
-    if (keys['1']) {
+    if (keys["1"]) {
         player.swap(2);
         action = "waving";
         console.log(action);
@@ -72,10 +80,10 @@ function handleMovement() {
 
 // Key press tracking
 const keys = {};
-window.addEventListener('keydown', (event) => {
+window.addEventListener("keydown", (event) => {
     keys[event.key] = true;
 });
-window.addEventListener('keyup', (event) => {
+window.addEventListener("keyup", (event) => {
     player.swap(0);
     action = "idle";
     console.log(action);
