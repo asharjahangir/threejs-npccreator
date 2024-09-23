@@ -6,23 +6,7 @@ The following instructions should be able to get the program hosted on your mach
 NodeJS was used to deploy this project originally however you may get it to work with other frameworks.
 ### Installing
 Download zip or clone this repository and run the following commands on the terminal.
-#### 1. NPM
-```
-npm install
-```
-#### 3. Install ThreeJS
-```
-npm install --save three
-```
-#### 3. Install Blockly
-```
-npm install --save blockly
-```
-#### 3. Install vite
-```
-npm install vite
-```
-#### 4. Deploy
+#### Deploy
 ```
 npx vite
 ```
@@ -35,6 +19,7 @@ More blocks can be added via the blocklyEditor.js. Blockly is being used here  h
 * Play button - Executes the blocks inside the start block
 * Stop button - Stops the code after the execution of the current block
 * Reset button - Resets the position of the NPC
+* Save button - Saves the NPC State to the dropdown menu
 ### NPC
 More functions can be added inside the npc.js that are imported to blocklyEditor.js to make the blocks work.
 ## Sample images for reference
