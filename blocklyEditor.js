@@ -3,7 +3,7 @@ import { javascriptGenerator, Order } from "blockly/javascript";
 import { FieldMultilineInput } from "@blockly/field-multilineinput";
 import { createNPCGroup } from "./npc";
 import { scene } from "./npcScene";
-
+// Testing Commit
 let workspace;
 // Define workspace at a higher scope
 const npc = createNPCGroup(scene);
