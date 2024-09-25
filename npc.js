@@ -100,6 +100,7 @@ export function createNPCGroup(scene) {
 
     npc.blockAction = async function (action, duration) {
         console.log(`Performing ${action.toUpperCase()} action`);
+        logState(`Performing ${action.toUpperCase()} action`);
 
         // Immediately swap to the specified action
         switch (action) {
@@ -121,6 +122,7 @@ export function createNPCGroup(scene) {
                 break; // Exit if idle
             default:
                 console.log(`Unknown action: ${action.toUpperCase()}`);
+                logState(`Unknown action: ${action.toUpperCase()}`);
                 return; // Exit if action is unknown
         }
 
@@ -143,6 +145,7 @@ export function createNPCGroup(scene) {
                         Math.round((elapsedTime / 1000) * 10) / 10
                     } second(s)`
                 );
+                logState(`${action.toUpperCase()} action was performed for ${Math.round((elapsedTime / 1000) * 10) / 10} second(s)`);
                 return;
             }
         };
@@ -173,6 +176,7 @@ export function createNPCGroup(scene) {
 
     npc.blockMove = async function (distance) {
         // Start the NPC's movement animation
+        logState(`Moving ${distance} steps`);
         setTimeout(() => {
             npc.swap(1);
         }, 1);
@@ -199,6 +203,7 @@ export function createNPCGroup(scene) {
     };
 
     npc.blockMoveTarget = async function (direction, target) {
+        logState(`Moving ${direction} the ${target}`);
         setTimeout(() => {
             npc.swap(1);
         }, 1);
@@ -279,6 +284,7 @@ export function createNPCGroup(scene) {
     };
 
     npc.blockRotate = async function (angleInDegrees) {
+        logState(`Rotating ${angleInDegrees} degrees`);
         // Store the current quaternion
         const currentQuaternion = npc.quaternion.clone();
 
@@ -314,6 +320,7 @@ export function createNPCGroup(scene) {
     };
 
     npc.blockRotateTarget = async function (direction, target) {
+        logState(`Rotating ${direction} the ${target}`);
         if (direction === "towards") {
             if (target === "player") {
                 while (true) {
@@ -375,11 +382,13 @@ export function createNPCGroup(scene) {
         if (character === "player") {
             switch (action) {
                 case "nearby":
+                    console.log("Checking if player is NEARBY");
+                    logState("Checking if player is NEARBY");
                     if (
                         (await npc.position.distanceTo(player.position)) <=
                         distance
                     ) {
-                        console.log("Checking if player is NEARBY");
+                        logState(`${character} is ${action}`);
                         // Execute the statement_if block if the condition is true
                         if (statement_if) {
                             await statement_if(); // Execute the statement as a function
@@ -387,16 +396,20 @@ export function createNPCGroup(scene) {
                     }
                     break;
                 case "idle":
+                    console.log("Checking if player is IDLE");
+                    logState("Checking if player is IDLE");
                     if ((await player.getCurrentAction()) == "idle") {
-                        console.log("Checking if player is IDLE");
+                        logState(`${character} is ${action}`);
                         if (statement_if) {
                             await statement_if(); // Execute the statement as a function
                         }
                     }
                     break;
                 case "waving":
+                    console.log("Checking if player is WAVING");
+                    logState("Checking if player is WAVING");
                     if ((await player.getCurrentAction()) == "waving") {
-                        console.log("Checking if player is WAVING");
+                        logState(`${character} is ${action}`);
                         if (statement_if) {
                             await statement_if(); // Execute the statement as a function
                         }
@@ -428,11 +441,13 @@ export function createNPCGroup(scene) {
         if (character === "player") {
             switch (action) {
                 case "nearby":
+                    console.log("The PLAYER is NEARBY");
+                    logState("The PLAYER is NEARBY");
                     if (
                         (await npc.position.distanceTo(player.position)) <=
                         distance
                     ) {
-                        console.log("The PLAYER is NEARBY");
+                        logState(`${character} is ${action}`);
                         // Execute the statement_if block if the condition is true
                         if (statement_if) {
                             await statement_if(); // Execute the statement as a function
@@ -444,8 +459,10 @@ export function createNPCGroup(scene) {
                     }
                     break;
                 case "idle":
+                    console.log("The PLAYER is IDLE");
+                    logState("The PLAYER is IDLE");
                     if ((await player.getCurrentAction()) == "idle") {
-                        console.log("The PLAYER is IDLE");
+                        logState(`${character} is ${action}`);
                         if (statement_if) {
                             await statement_if(); // Execute the statement as a function
                         }
@@ -456,8 +473,10 @@ export function createNPCGroup(scene) {
                     }
                     break;
                 case "waving":
+                    console.log("The PLAYER is WAVING");
+                    logState("The PLAYER is WAVING");
                     if ((await player.getCurrentAction()) == "waving") {
-                        console.log("The PLAYER is WAVING");
+                        logState(`${character} is ${action}`);
                         if (statement_if) {
                             await statement_if(); // Execute the statement as a function
                         }
@@ -555,4 +574,24 @@ export function createNPCGroup(scene) {
     }
 
     return npc;
+}
+
+export function logState(state) {
+    const stateWindow = document.getElementById("updated-states");
+
+    // Create a new paragraph element
+    const newLog = document.createElement("p");
+    newLog.textContent = state;
+
+    // Append the new log to the state window
+    stateWindow.appendChild(newLog);
+
+    // Keep only the last 10 logs
+    const logs = stateWindow.children;
+    if (logs.length > 10) {
+        stateWindow.removeChild(logs[0]); // Remove the oldest log
+    }
+
+    // Scroll to the bottom of the updated-states div
+    stateWindow.scrollTop = stateWindow.scrollHeight;
 }

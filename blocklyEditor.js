@@ -2,7 +2,7 @@
 import * as Blockly from "blockly/core";
 import { javascriptGenerator, Order } from "blockly/javascript";
 import { FieldMultilineInput } from "@blockly/field-multilineinput";
-import { createNPCGroup } from "./npc";
+import { createNPCGroup, logState } from "./npc";
 import { scene } from "./npcScene";
 
 let workspace;
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("stop-button").addEventListener("click", stopCode);
     document
         .getElementById("reset-button")
-        .addEventListener("click", resetPosition);
+        .addEventListener("click", resetState);
 
     // Storage for saved states
     const savedStates = {};
@@ -186,7 +186,7 @@ Blockly.common.defineBlocks({ startBlock: startBlock });
 javascriptGenerator.forBlock["startBlock"] = function (block) {
     const statement_do = javascriptGenerator.statementToCode(block, "DO");
 
-    const code = `async function start() {\n\n${statement_do}\n\n} start(); npc.swap(0);`;
+    const code = `async function start() {logState("Start:")\n\n${statement_do}\n\n} start(); npc.swap(0);`;
     return code;
 };
 
@@ -236,12 +236,12 @@ javascriptGenerator.forBlock["loopBlock"] = function (block) {
     const statement_do = javascriptGenerator.statementToCode(block, "DO");
     const randomValue = Math.random() * 100;
     if (foreverChecked) {
-        return `while (!stopExecution) {
+        return `while (!stopExecution) { logState("Looping forever:");
             ${statement_do}
             await new Promise(resolve => setTimeout(resolve, 0)); // Yield control to prevent crashes
         }\n`;
     } else {
-        return `for (let i = 0; i < ${loopCount} && !stopExecution; i++) {
+        return `for (let i = 0; i < ${loopCount} && !stopExecution; i++) { logState("Looping ${loopCount} times");
             ${statement_do}
             await new Promise(resolve => setTimeout(resolve, 0)); // Yield control to prevent crashes
         }\n`;
@@ -689,23 +689,11 @@ async function stopCode() {
     stopExecution = true; // Set the flag to stop execution
 }
 
-async function resetPosition() {
+async function resetState() {
     npc.reset();
-}
 
-function getFPS() {
-    requestAnimationFrame(getFPS);
-
-    const currentTime = performance.now();
-    frameCount++;
-
-    // Calculate FPS every second
-    if (currentTime - lastFrameTime >= 1000) {
-        fps = frameCount;
-        frameCount = 0;
-        lastFrameTime = currentTime;
-        return fps;
-    }
+    const stateWindow = document.getElementById("updated-states");
+    stateWindow.innerHTML = ""; // This will remove all child elements
 }
 
 npc.animate();

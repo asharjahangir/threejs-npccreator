@@ -21,6 +21,7 @@
             height: 100%;
             background-color: #eeeeee;
             overflow: hidden;
+            position: relative; /* Ensure relative positioning for the overlay */
         }
 
         #blockly-container {
@@ -36,6 +37,29 @@
             overflow-x: auto;
             overflow-y: hidden;
             white-space: nowrap;
+        }
+
+        /* New overlay window styles */
+        #state-window {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 200px;
+            height: 100px;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            padding: 5px; /* Add padding to the state-window */
+        }
+
+        #updated-states {
+            max-height: 80px; /* Adjust height as needed */
+            overflow-y: auto; /* Enable vertical scrolling */
+            border: 1px solid #ccc; /* Add border to the scrollable box */
+            padding: 5px; /* Inner padding for the scrollable content */
+            box-sizing: border-box; /* Include padding in height and width */
+            scroll-behavior: smooth; /* Enable smooth scroll */
         }
 
         #behaviour-dropdown {
@@ -277,6 +301,10 @@
     <select id="behaviour-dropdown">
         <option value="" disabled selected>Choose behaviour template</option>
     </select>
+
+    <div id="state-window">
+        <div id="updated-states"></div>
+    </div>
 
     <!-- Play button -->
     <button id="play-button">
