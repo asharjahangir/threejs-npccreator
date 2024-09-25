@@ -1,15 +1,10 @@
-// npc.js
+// NPC.JS CONTAINS ALL OF THE THREEJS CODE ORGANIZED BY THE BLOCKS, EDIT THE THREEJS INSIDE THE BLOCK FUNCTIONS WITH THE VR PANDA COMPATIBLE CODE WHEN IMPLEMENTING
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { scene } from "./npcScene";
 import { action, player } from "./player";
 action;
 
-let isMoving = false;
 let targetRotation = new THREE.Vector3();
-let chanceOfIdle = 40;
-let lookAroundTime = 0; // Timer for looking around
-const maxLookAroundDuration = 3; // Max duration to look around (in seconds)
 let distance = 3;
 const speed = 0.03; // Speed for smooth movement
 
@@ -101,7 +96,7 @@ export function createNPCGroup(scene) {
         npc.swap(0);
     };
 
-    // Blocks
+    // Blocks - EACH BLOCK HAS ITS OWN FUNCTION, IF THE BLOCK REQUIRES THREEJS IT WILL BE FOUND HERE HOWEVER FOR NUMBER BLOCK AND LOGIC BLOCKS, THEY ARE CONTAINED IN THE BLOCKLYEDITOR.JS
 
     npc.blockAction = async function (action, duration) {
         console.log(`Performing ${action.toUpperCase()} action`);

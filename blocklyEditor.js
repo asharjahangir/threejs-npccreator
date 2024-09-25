@@ -1,9 +1,10 @@
+// ALL OF THE BLOCKLY RELATED CODE IS HERE HOWEVER THERE ARE A FEW HTML ELEMENTS LIKE THE PLAY BUTTON AND STOP BUTTON, ETC THAT CAN BE FOUND IN INDEX.HTML
 import * as Blockly from "blockly/core";
 import { javascriptGenerator, Order } from "blockly/javascript";
 import { FieldMultilineInput } from "@blockly/field-multilineinput";
 import { createNPCGroup } from "./npc";
 import { scene } from "./npcScene";
-// Testing Commit
+
 let workspace;
 // Define workspace at a higher scope
 const npc = createNPCGroup(scene);

@@ -1,3 +1,4 @@
+// THIS IS A SAMPLE THREEJS SCENE AND SHOULD BE REPLACED WITH THE VR PANDA EDITOR 3D SCENE WHEN IMPLEMENTED TO VR PANDA.
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"; // Import OrbitControls
 
