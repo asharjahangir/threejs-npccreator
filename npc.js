@@ -586,12 +586,6 @@ export function logState(state) {
     // Append the new log to the state window
     stateWindow.appendChild(newLog);
 
-    // Keep only the last 10 logs
-    const logs = stateWindow.children;
-    if (logs.length > 10) {
-        stateWindow.removeChild(logs[0]); // Remove the oldest log
-    }
-
     // Scroll to the bottom of the updated-states div
     stateWindow.scrollTop = stateWindow.scrollHeight;
 }

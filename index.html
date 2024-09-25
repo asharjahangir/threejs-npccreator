@@ -45,7 +45,7 @@
             bottom: 20px;
             left: 20px;
             width: 200px;
-            height: 100px;
+            height: 140px;
             background-color: white;
             border: 1px solid #ccc;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -54,12 +54,20 @@
         }
 
         #updated-states {
-            max-height: 80px; /* Adjust height as needed */
-            overflow-y: auto; /* Enable vertical scrolling */
-            border: 1px solid #ccc; /* Add border to the scrollable box */
+            height: 80px; /* Use a percentage for dynamic height */
+            max-height: 80px; /* Remove any max-height for fullscreen */
+            overflow-y: auto; /* Keep scrolling enabled */
+            border: 1px solid #ccc; /* Keep border for consistency */
             padding: 5px; /* Inner padding for the scrollable content */
             box-sizing: border-box; /* Include padding in height and width */
             scroll-behavior: smooth; /* Enable smooth scroll */
+        }
+
+        #state-window.fullscreen {
+            position: fixed; /* Make it fixed for fullscreen */
+            z-index: 1000; /* Ensure it overlays above other content */
+            background-color: white; /* Maintain background color */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Optional shadow for better visibility */
         }
 
         #behaviour-dropdown {
@@ -121,6 +129,36 @@
 
         #reset-button img,
         #save-button img {
+            width: 24px;
+            height: 24px;
+            filter: brightness(0) invert(1);
+        }
+
+        #fullscreen-button {
+            position: absolute;
+            bottom: 5px; /* Adjust based on your layout */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Offset to the left by half its width */
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(to left, orange, #f40d30);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s;
+        }
+
+        #fullscreen-button:hover {
+            background: linear-gradient(to left, #d30101, orange);
+        }
+
+        #fullscreen-button img {
             width: 24px;
             height: 24px;
             filter: brightness(0) invert(1);
@@ -304,6 +342,9 @@
 
     <div id="state-window">
         <div id="updated-states"></div>
+        <button id="fullscreen-button">
+            <img src="images/fullscreen-icon.png" alt="Fullscreen" />
+        </button>
     </div>
 
     <!-- Play button -->
@@ -334,6 +375,45 @@
     <script src="https://unpkg.com/blockly"></script>
     <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
     <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+    <script>
+        const stateWindow = document.getElementById('state-window');
+        const updatedStates = document.getElementById('updated-states');
+        const fullscreenButton = document.getElementById('fullscreen-button');
+        const icon = fullscreenButton.querySelector('img'); // Select the img inside the button
+    
+        fullscreenButton.addEventListener('click', () => {
+            // Toggle fullscreen mode
+            if (stateWindow.classList.contains('fullscreen')) {
+                // Exit fullscreen
+                stateWindow.classList.remove('fullscreen');
+                stateWindow.style.width = '200px'; // Reset to original width
+                stateWindow.style.height = '140px'; // Reset to original height
+                updatedStates.style.height = '80px'; // Reset updated-states height
+                stateWindow.style.top = 'auto'; // Reset position
+                stateWindow.style.left = '20px'; // Reset position
+                stateWindow.style.transform = 'none'; // Reset transform
+                updatedStates.style.height = '80px';
+                updatedStates.style.maxHeight = '80px';
+    
+                // Change icon back to fullscreen
+                icon.src = 'images/fullscreen-icon.png';
+            } else {
+                // Enter fullscreen
+                stateWindow.classList.add('fullscreen');
+                stateWindow.style.width = '80vw'; // Set to 80% of viewport width
+                stateWindow.style.height = '80vh'; // Set to 80% of viewport height
+                updatedStates.style.height = '60%'; // Set updated-states height to 60% of state-window
+                stateWindow.style.top = '50%'; // Center vertically
+                stateWindow.style.left = '50%'; // Center horizontally
+                stateWindow.style.transform = 'translate(-50%, -50%)'; // Offset for centering
+                updatedStates.style.height = '75vh';
+                updatedStates.style.maxHeight = '70vh';
+    
+                // Change icon to minimize
+                icon.src = 'images/minimize-icon.png';
+            }
+        });
+    </script>
 </body>
 
 </html>
