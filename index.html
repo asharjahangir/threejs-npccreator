@@ -63,6 +63,15 @@
             scroll-behavior: smooth; /* Enable smooth scroll */
         }
 
+        #updated-states p {
+            display: none; /* Hide all paragraphs by default */
+        }
+
+        #updated-states p:last-of-type {
+            display: block; /* Show only the last paragraph */
+            margin: 0; /* Center the last paragraph vertically */
+        }
+
         #state-window.fullscreen {
             position: fixed; /* Make it fixed for fullscreen */
             z-index: 1000; /* Ensure it overlays above other content */
@@ -394,6 +403,11 @@
                 stateWindow.style.transform = 'none'; // Reset transform
                 updatedStates.style.height = '80px';
                 updatedStates.style.maxHeight = '80px';
+
+                const paragraphs = updatedStates.querySelectorAll('p');
+            paragraphs.forEach((p, index) => {
+                p.style.display = index === paragraphs.length - 1 ? 'block' : 'none';
+            });
     
                 // Change icon back to fullscreen
                 icon.src = 'images/fullscreen-icon.png';
@@ -408,6 +422,11 @@
                 stateWindow.style.transform = 'translate(-50%, -50%)'; // Offset for centering
                 updatedStates.style.height = '75vh';
                 updatedStates.style.maxHeight = '70vh';
+
+                const paragraphs = updatedStates.querySelectorAll('p');
+            paragraphs.forEach(p => {
+                p.style.display = 'block'; // Show all
+            });
     
                 // Change icon to minimize
                 icon.src = 'images/minimize-icon.png';
